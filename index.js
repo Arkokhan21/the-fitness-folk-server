@@ -18,6 +18,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const serviceCollection = client.db('theFitnessFolk').collection('services')
+        const allReviewsCollection = client.db('theFitnessFolk').collection('reviews')
         // get / read 3 services - 
         app.get('/services', async (req, res) => {
             const query = {}
@@ -42,6 +43,34 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const service = await serviceCollection.findOne(query)
             res.send(service)
+        })
+
+        // get / read a single service for review section -
+        app.get('/customerreview/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const singleservice = await serviceCollection.findOne(query)
+            res.send(singleservice)
+        })
+
+        // post / insert reviews - 
+        app.post('/reviews', async (req, res) => {
+            const review = req.body
+            const result = await allReviewsCollection.insertOne(review)
+            res.send(result)
+        })
+
+        // get / read reviews - 
+        app.get('/reviews', async (req, res) => {
+            let query = {}
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
+            const cursor = allReviewsCollection.find(query)
+            const reviews = await cursor.toArray()
+            res.send(reviews)
         })
     }
     finally {

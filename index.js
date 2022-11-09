@@ -45,13 +45,6 @@ async function run() {
             res.send(service)
         })
 
-        // get / read a single service for review section -
-        app.get('/customerreview/:id', async (req, res) => {
-            const id = req.params.id
-            const query = { _id: ObjectId(id) }
-            const singleservice = await serviceCollection.findOne(query)
-            res.send(singleservice)
-        })
 
         // post / insert reviews - 
         app.post('/reviews', async (req, res) => {
@@ -59,6 +52,7 @@ async function run() {
             const result = await allReviewsCollection.insertOne(review)
             res.send(result)
         })
+
 
         // get / read reviews - 
         app.get('/reviews', async (req, res) => {
@@ -68,9 +62,22 @@ async function run() {
                     email: req.query.email
                 }
             }
+            if (req.query.package) {
+                query = {
+                    package: req.query.package
+                }
+            }
             const cursor = allReviewsCollection.find(query)
             const reviews = await cursor.toArray()
             res.send(reviews)
+        })
+
+        // delete reviews - 
+        app.delete('/reviews/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await allReviewsCollection.deleteOne(query)
+            res.send(result)
         })
     }
     finally {

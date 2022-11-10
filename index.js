@@ -22,7 +22,7 @@ async function run() {
         // get / read 3 services - 
         app.get('/services', async (req, res) => {
             const query = {}
-            const cursor = serviceCollection.find(query).limit(3)
+            const cursor = serviceCollection.find(query, { "title": 1, _id: 0 }).sort({ "title": -1 }).limit(3)
             const services = await cursor.toArray()
             res.send(services)
         })
@@ -31,7 +31,7 @@ async function run() {
         // get / read all services - 
         app.get('/services/all', async (req, res) => {
             const query = {}
-            const cursor = serviceCollection.find(query)
+            const cursor = serviceCollection.find(query, { "title": 1, _id: 0 }).sort({ "title": -1 })
             const services = await cursor.toArray()
             res.send(services)
         })
@@ -88,13 +88,6 @@ async function run() {
             res.send(review)
         })
 
-        // post / insert Services- 
-        app.post('/addedservices', async (req, res) => {
-            const services = req.body
-            const result = await serviceCollection.insertOne(services)
-            res.send(result)
-        })
-
         app.put('/reviews/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
@@ -109,6 +102,12 @@ async function run() {
             res.send(result);
         })
 
+        // post / insert Services- 
+        app.post('/addedservices', async (req, res) => {
+            const services = req.body
+            const result = await serviceCollection.insertOne(services)
+            res.send(result)
+        })
     }
     finally {
 

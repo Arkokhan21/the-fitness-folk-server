@@ -19,6 +19,7 @@ async function run() {
     try {
         const serviceCollection = client.db('theFitnessFolk').collection('services')
         const allReviewsCollection = client.db('theFitnessFolk').collection('reviews')
+
         // get / read 3 services - 
         app.get('/services', async (req, res) => {
             const query = {}
